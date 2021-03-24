@@ -147,9 +147,10 @@ def count_configs(dat):
 
 
 def print_out_indices(configs, frames, file):
-	writers = configs['string']
-	for i in frames:
-		print(writers[i], file=file)
+	to_write = configs[frames]
+	writes = to_write['config']
+	for config in writes:
+		print(config, file=file)
 	print('Finished!')
 
 
@@ -162,9 +163,16 @@ def print_out_types(configs, types, file):
 	print('Finished!')
 
 
-def print_out_energy():
-	# TODO: make new panda column which has an energy/atom column
-	print('In Progress')
+def print_out_energy(configs, type, num, file, num2=None):
+	if type == 'percentile': # reported in percent (e.g. 50% = 50)
+		n_configs = len(configs)
+		take = int(n_configs * num / 100)
+		sorted = np.sort(configs['energy'])
+		writes = configs[take:]
+		for conf in writes:
+			print(conf, file=file)
+
+
 
 
 ### Debugging
@@ -176,10 +184,16 @@ if not debug_conf:
 	in_name = input('XYZ file without extension: ')
 else:
 	in_name = 'gap_carbon'
-f = open(in_name+'.xyz', 'r')
-dat = f.readlines()
-n_configs = count_configs(dat)
-print(str(n_configs)+' frames detected')
+try:
+	dat = np.load(in_name+'.npy', allow_pickle=True)
+	n_configs = len(dat)
+	print(str(n_configs)+' numpy frames detected')
+except FileNotFoundError:
+	f = open(in_name+'.xyz', 'r')
+	dat = f.readlines()
+	n_configs = count_configs(dat)
+	print(str(n_configs)+' frames detected')
+
 
 print('Output\n--------------')
 if not debug_conf:
@@ -212,7 +226,7 @@ else:
 	choice = input('Enter "l" for list of frames or "t" for type of config\n')
 	if choice == 'l':
 		frames_list = []
-		print('Enter lists exactly\nstart1:stop1, start2:stop2, ...')
+		print('Counts start at 1\nEnter lists exactly like-\nstart1:stop1, start2:stop2, ...')
 		frames = input('Range of frames:\n')
 		ranges = frames.split(',')
 		if frames != '':
@@ -222,6 +236,7 @@ else:
 			print('Total num frames: '+str(len(frames_list)))
 		configs = read_configs(dat)
 		print_out_indices(configs, frames_list, out_file)
+
 	elif choice == 't':
 		available = sp.check_output("grep -oP 'config_type=\K\w+' "+in_name
 									+".xyz | sort --unique", shell=True)\
@@ -246,7 +261,7 @@ else:
 		type = None
 		num_types = 0
 		num_frames = 0
-		print('Begin adding types')
+		print('Begin adding types.')
 		while type != '':
 			type = input('')
 			if type != '':
@@ -259,7 +274,11 @@ else:
 					print('Not valid input')
 
 		print('\nTypes Selected: ', type_list)
-		configs = read_configs(dat)
+		try:
+			configs = np.load(in_name+'.npy', allow_pickle=True)
+		except FileNotFoundError:
+			configs = read_configs(dat)
+		np.save(in_name, configs)
 		print_out_types(configs, type_list, out_file)
 
 	elif choice == 'e':
