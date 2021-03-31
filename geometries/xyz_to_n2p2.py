@@ -67,50 +67,47 @@ def read_configs(dat):
 
 		# Format Lattice
 		lat = observables['Lattice'].split()
-		nlat = '\t'+lat[0]+'\t'+lat[1]+'\t'+lat[2]+'\n'
-		nlat += '\t'+lat[3]+'\t'+lat[4]+'\t'+lat[5]+'\n'
-		nlat += '\t'+lat[6]+'\t'+lat[7]+'\t'+lat[8]+'\n'
+		nlat =  'lattice \t'+lat[0]+'\t'+lat[1]+'\t'+lat[2]+'\n'
+		nlat += 'lattice \t'+lat[3]+'\t'+lat[4]+'\t'+lat[5]+'\n'
+		nlat += 'lattice \t'+lat[6]+'\t'+lat[7]+'\t'+lat[8]+'\n'
 		observables['Lattice'] = nlat
 
 
 		# Parse atomic info
 		# gap xyz format = Species X Y Z AtomicNum Fx Fy Fz
+		# n2p2 format = X Y Z Symbol 0 0 Fx Fy Fz (the two zeros are mandatory)
 		n_descriptors = len(cfg[2].split())
 		atoms = np.empty((n_atoms, n_descriptors+1), dtype='<U10')
-		atoms[:, 0] = range(1, n_atoms+1)
 		for i in range(n_atoms):
 			atom = cfg[i+2].split()
-			atoms[i, 2:] = atom[1:]
-		atoms = np.delete(atoms, 5, 1)
-		atoms[:, 1] = '0'
+			atoms[i, :-1] = atom[:]
+		# Current format = Species X Y Z AtomicNum Fx Fy Fz Blank
+		# 				  =  0      1 2 3 4         5  6  7  8
+		# Swap to correct order
+		atoms = atoms[:, [1, 2, 3, 0, 4, 8, 5, 6, 7]]
+		atoms[:, 4] = 0; atoms[:, 5] = 0 # Blank out for n2p2 format
 
 
 		# Format atomic info
-		tabs = np.repeat(['\t'], atoms.shape[0])[:,None]
+		start_str = np.repeat(['atom '], atoms.shape[0])[:,None]
 		nlines = np.repeat(['\n'], atoms.shape[0])[:,None]
-		atom_strings = [('\t').join(line) for line in np.concatenate((tabs, atoms, nlines), axis=1)]
+		atom_strings = [('\t').join(line) for line in np.concatenate((start_str, atoms, nlines), axis=1)]
 		system_string = ''
 		for i in atom_strings:
 			system_string += i
 
 
 		# Format write string
-		write = 'BEGIN_CFG\n'
-		write += ' Size\n'
-		write += '\t'+str(n_atoms)+'\n'
-		write += ' Supercell\n'
-		write += nlat.strip("\"")+'\n'
-		write += ' AtomData:\tid\ttype\tcartes_x\tcartes_y\tcartes_z\tfx\tfy\tfz\n'
+		write = 'begin\n'
+		write += 'comment config_type '+observables['config_type']+'\n'
 		write += system_string
-		write += ' Energy\n\t'+observables['energy']+'\n'
-		for i in ['config_type']:
-			write += ' Feature\t'+i+'\t'+observables[i]+'\n'
-		write += 'END_CFG\n'
+		write += 'energy\t'+observables['energy']+'\n'
+		write += 'charge\t0.0\n'
+		write += 'end'
 
 
 		# write to array
 		frames[frame_count] = observables['config_type'], observables['energy'], n_atoms, write
-
 
 		# Iterate
 		line_count += numlines
@@ -147,10 +144,9 @@ def count_configs(dat):
 
 
 def print_out_indices(configs, frames, file):
-	to_write = configs[frames]
-	writes = to_write['config']
-	for config in writes:
-		print(config, file=file)
+	writers = configs['string']
+	for i in frames:
+		print(writers[i], file=file)
 	print('Finished!')
 
 
@@ -163,16 +159,9 @@ def print_out_types(configs, types, file):
 	print('Finished!')
 
 
-def print_out_energy(configs, type, num, file, num2=None):
-	if type == 'percentile': # reported in percent (e.g. 50% = 50)
-		n_configs = len(configs)
-		take = int(n_configs * num / 100)
-		sorted = np.sort(configs['energy'])
-		writes = configs[take:]
-		for conf in writes:
-			print(conf, file=file)
-
-
+def print_out_energy():
+	# TODO: make new panda column which has an energy/atom column
+	print('In Progress')
 
 
 ### Debugging
@@ -184,32 +173,26 @@ if not debug_conf:
 	in_name = input('XYZ file without extension: ')
 else:
 	in_name = 'gap_carbon'
-try:
-	dat = np.load(in_name+'.npy', allow_pickle=True)
-	n_configs = len(dat)
-	print(str(n_configs)+' numpy frames detected')
-except FileNotFoundError:
-	f = open(in_name+'.xyz', 'r')
-	dat = f.readlines()
-	n_configs = count_configs(dat)
-	print(str(n_configs)+' frames detected')
-
+f = open(in_name+'.xyz', 'r')
+dat = f.readlines()
+n_configs = count_configs(dat)
+print(str(n_configs)+' frames detected')
 
 print('Output\n--------------')
 if not debug_conf:
-	out_name = input('Insert new name, if desired (default <xyz_name>.cfg): ')
+	out_name = input('Insert new name, if desired (default <xyz_name>.n2p2): ')
 	if out_name == "":
 		out_name = in_name
-	if os.path.exists(out_name+'.cfg'):
+	if os.path.exists(out_name+'.n2p2'):
 		check = input('This file exists, overwrite? (y)')
 		if check != 'y':
 			print('exiting!')
 			exit()
 		else:
-			print('Overwriting '+out_name+'.cfg')
-	out_file = open(out_name+'.cfg', 'w+')
+			print('Overwriting '+out_name+'.data')
+	out_file = open(out_name+'.data', 'w+')
 else:
-	out_file = open('cfg.cfg', 'w+')
+	out_file = open('n2p2.data', 'w+')
 
 
 
@@ -226,7 +209,7 @@ else:
 	choice = input('Enter "l" for list of frames or "t" for type of config\n')
 	if choice == 'l':
 		frames_list = []
-		print('Counts start at 1\nEnter lists exactly like-\nstart1:stop1, start2:stop2, ...')
+		print('Enter lists exactly\nstart1:stop1, start2:stop2, ...')
 		frames = input('Range of frames:\n')
 		ranges = frames.split(',')
 		if frames != '':
@@ -235,12 +218,12 @@ else:
 				frames_list.append(list(range(r[0], r[1]+1)))
 			print('Total num frames: '+str(len(frames_list)))
 		try:
-			configs = np.load(in_name+'_mlp.npy', allow_pickle=True)
+			configs = np.load(in_name + '_n2p2.npy', allow_pickle=True)
 		except FileNotFoundError:
 			configs = read_configs(dat)
-			np.save(in_name+'_mlp', configs)
+			np.save(in_name + '_n2p2', configs)
+		print_out_types(configs, type_list, out_file)
 		print_out_indices(configs, frames_list, out_file)
-
 	elif choice == 't':
 		available = sp.check_output("grep -oP 'config_type=\K\w+' "+in_name
 									+".xyz | sort --unique", shell=True)\
@@ -265,7 +248,7 @@ else:
 		type = None
 		num_types = 0
 		num_frames = 0
-		print('Begin adding types.')
+		print('Begin adding types')
 		while type != '':
 			type = input('')
 			if type != '':
@@ -279,10 +262,10 @@ else:
 
 		print('\nTypes Selected: ', type_list)
 		try:
-			configs = np.load(in_name+'_mlp.npy', allow_pickle=True)
+			configs = np.load(in_name + '_n2p2.npy', allow_pickle=True)
 		except FileNotFoundError:
 			configs = read_configs(dat)
-			np.save(in_name+'_mlp', configs)
+			np.save(in_name + '_n2p2', configs)
 		print_out_types(configs, type_list, out_file)
 
 	elif choice == 'e':
