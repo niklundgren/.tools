@@ -1,12 +1,16 @@
 import ase
 import ase.io
 from ase.io import *
+import sys
 
-conc = [15,20,25,50,75,100]
-for c in conc:
-	x = str(c)
-	atoms = read('coords.'+i,format='lammps-data')
-#	sym = atoms.get_chemical_symbols()
-#	sym[sym == 'H'] = 'Si'
-#	atoms.set_chemical_symbols(x)
-	write('outs/xyz_structures/aSiGe2k_C'+x+'.xyz',atoms, format='xyz')
+atoms = read('coords.lmp', format='lammps-data', style='atomic')
+sym = atoms.get_chemical_symbols()
+
+if sys.argv[1] == None:
+	in_sym = input('Give chem symbol')
+else:
+	in_sym = sys.argv[1]
+
+sym[sym == 'H'] = in_sym
+atoms.set_chemical_symbols(sym)
+write('coords.xyz', images=atoms, format='xyz')

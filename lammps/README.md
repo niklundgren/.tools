@@ -4,6 +4,8 @@ calculations (e.g. dynamical matrix and third order matrix calculations) as
 well as for sets of scripts designed to accomplish a goal (e.g. the melt
 quench set).
 
+# Files
+make-diamond-unitcell.lmp # input file for creating diamond unit cell
 
 
 # General Script
