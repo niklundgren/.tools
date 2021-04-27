@@ -1,0 +1,38 @@
+#!/bin/bash
+## This runs python scripts and directs std.out and std.err to a log file
+while getopts":p:" opt;
+do
+	case $opt in
+		p)
+			export OMP_NUM_THREADS=${OPTARG}
+			export MKL_NUM_THREADS=${OPTARG}
+			;;
+		\?)
+			echo "Invalid Option"
+			;;
+done
+
+if test -z $1
+then
+	echo 'Select Python input'
+	read file
+else
+	file=$1
+fi
+
+echo Running ${file}
+out=log.${file%%.py} #removes .py extension
+
+# Ask for non default output location
+echo Enter output name \(defaults to ${1}\)
+read change
+if test -z ${change}
+then
+	echo Default log selected
+else
+	out=${change}
+fi
+
+# Run and output
+python ${file} > ${out} 2>&1 & disown
+echo Stdin and stderr directed to ${out}
