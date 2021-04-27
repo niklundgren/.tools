@@ -1,16 +1,11 @@
 #!/bin/bash
-## This runs python scripts and directs std.out and std.err to a log file
-while getopts":p:" opt;
-do
-	case $opt in
-		p)
-			export OMP_NUM_THREADS=${OPTARG}
-			export MKL_NUM_THREADS=${OPTARG}
-			;;
-		\?)
-			echo "Invalid Option"
-			;;
-done
+########################################################################
+## Usage: runpy <script.py>
+## runs the script.py and outputs to log.<script> 
+## You'll be prompted for alternate log file name, but pressing enter
+## causes it to default. Stdin and Stderr and redirected and the process
+## is disowned, freeing up the terminal for other uses.
+########################################################################
 
 if test -z $1
 then
