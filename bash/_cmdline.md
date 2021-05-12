@@ -1,4 +1,7 @@
 ########## BASH BASICS #####################################
+Tab is used as an autocomplete for commands and paths
+ --> this is your best friend <--
+
 # Look around and move
 ls -a # lists all files (including hidden)
 
@@ -52,7 +55,7 @@ example: !?xyz - reruns your last command that used an xyz file
 !-<n> - executes the n-th last command you used
 example: !-3 runs the command you gave three commands ago
 
-!<arg>:s^<old>^<new> - executes a command with substituded regex
+!!:s/<old>/<new> - executes the last command with substituded regex
 example !!:s^file1^file2 reruns the last command with file2
 
 !:p - prints your last command
