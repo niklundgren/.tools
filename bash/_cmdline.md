@@ -108,6 +108,7 @@ done
 ########## TEXT MANIPULATION ##############################
 # returns unique results from a regex expression
 grep -oP 'config_type=\K\w+' gap_carbon.xyz | sort --unique
+
 # returns counts of unique results from a regex expression
 grep -oP "config_type\s\K\w*" test.cfg | sort | uniq -c
 
@@ -144,3 +145,4 @@ find <dir_to_search> --name <filename>
 timeout <t><s/m/h> <command>
 # Run stuff after a certain amount of time
 sleep <t><s/m/h>; <command>
+

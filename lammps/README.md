@@ -6,6 +6,7 @@ quench set).
 
 # Files
 make-diamond-unitcell.lmp # input file for creating diamond unit cell
+lattice-dynamics.lmp # input file to run dynamical_matrix and third_order
 
 
 # General Script
