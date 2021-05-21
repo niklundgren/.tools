@@ -12,8 +12,3 @@ mass		1 12
 
 write_data unitcell.lmp
 
-#pair_style   quip
-#pair_coeff   * * potentials/gap/carbon/Carbon_GAP_20.xml "Potential xml_label=GAP_2020_4_27_60_2_50_5_436" 6
-#mass         1 12
-#dynamical_matrix all eskm 1e-05 file dynamical.lmp binary no
-#third_order all eskm 1e-05 file third_order.lmp binary no

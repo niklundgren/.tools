@@ -5,8 +5,10 @@ well as for sets of scripts designed to accomplish a goal (e.g. the melt
 quench set).
 
 # Files
-make-diamond-unitcell.lmp # input file for creating diamond unit cell
-lattice-dynamics.lmp # input file to run dynamical_matrix and third_order
+- make-diamond-unitcell.lmp # input file for creating diamond unit cell
+- lattice-dynamics.lmp # input file to run dynamical_matrix and third_order
+- davide-lammps-template.lmp # Davide's template for running MD in lammps, has
+a nice format for selecting thermo/barostats etc.
 
 
 # General Script
