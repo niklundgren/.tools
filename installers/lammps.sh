@@ -1,0 +1,1 @@
+cmake ../ -C ../presets/ryzen32.cmake -DPKG_PYTHON=on -DLAMMPS_EXCEPTIONS=on -DBUILD_SHARED_LIBS=on -DQUIP_LIBRARY=/home/nwlundgren/develop/QUIP/build/linux_x86_64_gfortran_openmp/libquip.a -DPKG_USER-QUIP=yes -DBUILD_OMP=yes -DBUILD_MPI=yes -DPKG_USER-OMP=yes -DFFT=KISS > out.kiss
