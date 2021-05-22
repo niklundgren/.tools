@@ -5,8 +5,10 @@
 # 4. General Script
 
 ### Files
-make-diamond-unitcell.lmp # input file for creating diamond unit cell
-
+- make-diamond-unitcell.lmp # input file for creating diamond unit cell
+- lattice-dynamics.lmp # input file to run dynamical_matrix and third_order
+- davide-lammps-template.lmp # Davide's template for running MD in lammps, has
+a nice format for selecting thermo/barostats etc.
 
 ### Lammps Scripting
 This is a directory for unloading helpful lammps scripts that are designed to do one off
@@ -16,7 +18,6 @@ quench set).
 Order matters for a lot of the commands, e.g. a region comes before a box.
 
 ### Function Specific
-
 # ** rerun **
 Rerun is super finnicky. It needs things in extxyz format, but make sure
 that it's first column is for atom "types" (which, requires ASE to write
