@@ -22,6 +22,11 @@ conda update conda
 conda env create --file develop.yml --prefix <relative_path>
 source activate develop
 
+# This lets you use git repos as python modules
+# without installing as a permanent fixture
+conda develop <path/to/git_modules>
+
+
 #>>>> develop.yml >>>>>>>>>>>>>>>>>>
 # Note on the yml: the spaces after the colons are
 # important, don't delete.
@@ -33,6 +38,7 @@ dependencies:
   - pytorch=1.*
   - tensorflow-gpu=2.*
   - cmake=3.*
+  - conda-build
   - cudnn=7.*
   - cupti=10.*
   - cxx-compiler=1.0
