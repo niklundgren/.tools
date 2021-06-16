@@ -1,0 +1,14 @@
+units		metal
+processors	* * *
+boundary	p p p
+atom_style	full
+atom_modify	map array
+lattice		diamond	3.5678
+
+region		simbox block 0 1 0 1 0 1
+create_box	1 simbox
+create_atoms	1 box
+mass		1 12
+
+write_data unitcell.lmp
+
