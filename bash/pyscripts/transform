@@ -1,0 +1,5 @@
+#!/bin/bash
+## This creates a transformed xyz script suitable for a lammps prism region.
+## Usage: trans <xyz> 
+## Outputs: <xyz>.t
+python /home/nicholas/.bin/pyscripts/transform.py ${1}

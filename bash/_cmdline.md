@@ -1,3 +1,12 @@
+# TABLE OF CONTENTS #
+# 1. Basics
+# 2. Bang commands
+# 3. Scripting
+# 4. Specific Tools
+#	Text
+#	System monitoring
+#	Timing
+
 ########## BASH BASICS #####################################
 # Look around and move
 ls -a # lists all files (including hidden)
@@ -11,6 +20,10 @@ around. It starts a "stack" (first in; last out) with your current
 directory at the bottom and <absolute path> as the second item. To return
 to your starting directory enter popd. You can run pushd any number of times
 before "popping" back to your initial directory.
+example: pwd - /home/nicholas/develop `$user: pushd ../simulations`
+	*this puts you at the simulations directory*
+	`$user: popd`
+	*this puts you back in develop!*
 
 # Running stuff
 <c1> | <c2> #pipes the output of one command to the next
@@ -33,6 +46,10 @@ you direct those somewhere
 ctrl-u - cuts before cursor
 
 crtl-y - pastes
+
+ctrl-w - cuts one word previous
+
+alt-shift-3 - makes current command line a comment in history retrievable with `history n`
 
 # Bang Commands ##################################
 # searches your commandline history 
@@ -98,13 +115,21 @@ done
 
 ############## SPECIFIC TOOLS #############################
 # Contents:
-# 1. Text Manipulation
+# 1. Text + Numerical Manipulation
 # 2. System Checks
 # 3. Timing
 ###########################################################
-########## TEXT MANIPULATION ##############################
+########## TEXT + NUMERICAL MANIPULATION ##################
+### Text ###
+# Print selected columns of a text file
+cat text | awk '{ print $2, $3, $4, $5 }' > out.xyz
+
+# Print and format selected columns
+cat text | awk '{ printf "%.5f %i %s", $1, $2, $3}' > out.xyz
+
 # returns unique results from a regex expression
 grep -oP 'config_type=\K\w+' gap_carbon.xyz | sort --unique
+
 # returns counts of unique results from a regex expression
 grep -oP "config_type\s\K\w*" test.cfg | sort | uniq -c
 
@@ -116,6 +141,12 @@ grep <exp> file
 	# -v <pattern> = excludes pattern
 	# -oP "<pattern>"= use regex
 
+# return every nth line (including starting with displacement)
+awk "(NR-<d>) % <n> == 0" <file> 
+
+### Numerical
+# Use this to edit some columns of numbers
+cat data.txt | awk '{ printf "%i %.8f %.9f", $1 $3/5000, $3*21 }' > out.dat
 
 ############### SYSTEM CHECKS #######################
 ## Check for library
