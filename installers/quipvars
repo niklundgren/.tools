@@ -1,0 +1,26 @@
+# Source this before running `make config`
+# Architechure
+export QUIP_ARCH=linux_x86_64_gfortran_openmp
+
+# Install locally inside quip dir
+export QUIP_INSTALLDIR=/develop/QUIP/build/${QUIP_ARCH}
+
+# Set quippy variables
+# OR set these in build/quiparch/Makefile.inc
+export QUIPPY_INSTALL_OPTS="--prefix=$QUIP_INSTALLDIR/quippy --user"
+
+# You can set $LIBRARY_PATH for linker paths during 
+# link time (i.e. if it can't find libquip_nostub.a)
+# Also, the Makefile in the build directory has a spot to add 
+# library paths (e.g. -L/path/to/lib)
+
+# After this run 
+# 1. `make config`
+# 2. `make` (no parallelization)
+# 3. `make install`
+# 4. `make libquip` (for lammps usage)
+# 5. `make quippy` (python wrapper)
+# After this add the lib directiory to $PYTHONPATH like:
+# 6a. `export PYTHONPATH=$PYTHONPATH:/$QUIP_INSTALLDIR/quippy`
+# or try to install to the current virtualenv like
+# 6b. `make install-quippy`
