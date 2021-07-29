@@ -9,8 +9,9 @@
 
 if test -z $1
 then
-	echo 'Select Python input'
-	read file
+	echo "Usage: runpy <script.py>, outputs directed to log.<script>"
+#	echo 'Select Python input'
+#	read file (uncomment this to read in a variable)
 else
 	file=$1
 fi
