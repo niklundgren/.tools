@@ -1,16 +1,9 @@
 from ase.io import read,write
-import numpy as np
 
-inputfile = input('DLP config name? --Default=CONFIG (press enter)')
-if inputfile=='':
-	inputfile='CONFIG'
+inputfile='CONFIG'
+outputfile='replicated_atoms.xyz'
 
-outputfile = input('New xyz file name? --Default=<Unique_element_types> (press enter)')
-
-atoms = read(inputfile, format='dlp4')
-print('First element read is %s' % atoms.get_chemical_symbols()[0])
-if outputfile=='':
-	list_elements = np.unique(atoms.get_chemical_symbols())
-	outputfile= "".join(list_elements)
-write(outputfile+'.xyz', images=atoms, format='xyz')
+for x in (0, 5, 10, 15, 20, 25, 50, 75, 90, 100):
+	atoms = read(str(x)+'/'+inputfile, format='dlp4')
+	write(str(x)+'/'+outputfile, images=atoms, format='xyz')
 

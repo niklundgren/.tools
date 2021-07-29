@@ -24,7 +24,12 @@ source activate develop
 
 # This lets you use git repos as python modules
 # without installing as a permanent fixture
+# requires: conda-build
 conda develop <path/to/git_modules>
+
+# find location of conda package
+conda search --envs <pkg>
+
 
 
 #>>>> develop.yml >>>>>>>>>>>>>>>>>>

@@ -145,21 +145,24 @@ def count_configs(dat):
 			count += 1
 	return count
 
-
 def print_out_indices(configs, frames, file):
 	to_write = configs[frames]
 	writes = to_write['config']
+	np.save(out_file, writes)
 	for config in writes:
 		print(config, file=file)
 	print('Finished!')
 
 
 def print_out_types(configs, types, file):
+	writes = []
 	for t in types:
 		single_type_confs = configs[configs['config_type'] == t]
-		writes = single_type_confs['config']
-		for conf in writes:
-			print(conf, file=file)
+		single_writes = single_type_confs['config']
+		writes.extend(single_writes)
+	np.save(out_file, writes)
+	for conf in writes:
+		print(conf, file=file)
 	print('Finished!')
 
 
@@ -169,8 +172,13 @@ def print_out_energy(configs, type, num, file, num2=None):
 		take = int(n_configs * num / 100)
 		sorted = np.sort(configs['energy'])
 		writes = configs[take:]
-		for conf in writes:
-			print(conf, file=file)
+	else:
+		print('undeveloped energy sort type, exiting!')
+		exit()
+
+	np.save(out_file, writes)
+	for conf in writes:
+		print(conf, file=file)
 
 
 
@@ -189,11 +197,14 @@ try:
 	n_configs = len(dat)
 	print(str(n_configs)+' numpy frames detected')
 except FileNotFoundError:
-	f = open(in_name+'.xyz', 'r')
+	try:
+		f = open(in_name+'.xyz', 'r')
+	except FileNotFoundError:
+		print('Fatal Error: No such input file: ', in_name)
+		exit()
 	dat = f.readlines()
 	n_configs = count_configs(dat)
 	print(str(n_configs)+' frames detected')
-
 
 print('Output\n--------------')
 if not debug_conf:

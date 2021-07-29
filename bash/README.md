@@ -3,7 +3,7 @@
 These are little command line syntax hints and tricks. Recently a more 
 thorough tutorial was added. Bash scripting is covered as well.
 
-#### Scripts #####################\
+#### Scripts #####################
 # calc
 runs bc calculator. enter a math string as an argument (e.g. calc 2+2)
 
@@ -16,3 +16,7 @@ to evaluate optimal runtime configurations.
 
 # grep_directory
 greps a directory for some argument.
+
+#### Pyscripts #####################
+For making bin executable versions of python scripts
+
