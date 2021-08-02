@@ -10,3 +10,7 @@ lammps     -	lammps scripts for quick MD
 specific   -	catch all for scripts that are long and complex, but may be recyclable 
 		for other purposes. Each has a small comment at the top describing what it does
 plotters   -	quick plot files
+
+# Favorite Cheat Sheets
+https://devhints.io/bash
+	- has great hints for bash/vim etc
